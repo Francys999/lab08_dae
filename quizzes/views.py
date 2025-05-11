@@ -81,6 +81,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
 
 class ChoiceViewSet(viewsets.ModelViewSet):
-    """ViewSet for Choice model"""
     queryset = Choice.objects.all()
     serializer_class = ChoiceSerializer
+
+    def perform_create(self, serializer):
+        question_id = self.request.data.get('question')
+        if not question_id:
+            raise serializers.ValidationError("The field 'question' is required.")
+        serializer.save(question_id=question_id)
+
